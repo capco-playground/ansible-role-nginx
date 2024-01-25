@@ -2,7 +2,7 @@
 # Set the values allowed for various variables
 nginx_setup_vars: [install, uninstall, upgrade]
 
-nginx_install_from_vars: [nginx_repository, source, os_repository]
+nginx_install_from_vars: [nginx_repository, source, os_repository, offline_pkg]
 
 nginx_branch_vars: [mainline, stable]
 

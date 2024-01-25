@@ -23,3 +23,9 @@ __pycache__
 # Logs #
 ########
 *.log
+
+# Offline test #
+################
+offline/*
+!offline/pkg/.gitkeep
+!offline/nginx/.gitkeep

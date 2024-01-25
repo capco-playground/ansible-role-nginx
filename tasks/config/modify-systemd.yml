@@ -4,6 +4,9 @@
     path: "{{ nginx_service_overridepath }}"
     state: directory
     mode: "0755"
+    owner: root
+  become: true
+  become_user: root
 
 - name: Create override for NGINX systemd service
   ansible.builtin.template:
@@ -15,6 +18,8 @@
   when:
     - not nginx_service_custom | bool
     - not nginx_service_clean | bool
+  become: true
+  become_user: root
   notify: (Handler) Systemd daemon-reload
 
 - name: Customize override for NGINX systemd service
@@ -27,6 +32,8 @@
   when:
     - nginx_service_custom | bool
     - not nginx_service_clean | bool
+  become: true
+  become_user: root
   notify: (Handler) Systemd daemon-reload
 
 - name: Remove override for NGINX systemd service

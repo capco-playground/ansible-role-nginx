@@ -1,0 +1,13 @@
+---
+## If you set this variable to `true`. it mean you can customize setting for NGINX components.
+nginx_custom_app_enabled: false
+
+customize_owner_user: "{{ ansible_user }}"
+customize_owner_group: "{{ ansible_user }}"
+
+customize_base_path: "/app"
+customize_base_log_path: "{{ customize_base_path }}/nginx/log"
+customize_base_ssl_path: "{{ customize_base_path }}/nginx/ssl"
+# customize_base_pid_path: "{{ customize_base_path }}/nginx/run"
+customize_base_cache_path: "{{ customize_base_path }}/nginx/cache"
+# customize_file_pid_name: "nginx.pid"

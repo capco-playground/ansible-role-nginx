@@ -1,0 +1,41 @@
+---
+- name: Ensure tmp folder {{ nginx_offline_dependencies_target_path }} is exists
+  ansible.builtin.file:
+    path: "{{ nginx_offline_dependencies_target_path }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+
+- name: Copy package files into host
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ nginx_offline_dependencies_target_path }}"
+    mode: '0744'
+    owner: "{{ ansible_user }}"
+  with_fileglob:
+    - "{{ nginx_offline_dependencies_basepath }}/*.rpm"
+  register: pkg_copied
+
+- name: Get files in target folder
+  ansible.builtin.find:
+    paths: "{{ nginx_offline_dependencies_target_path }}"
+    file_type: "file"
+    patterns: "*.rpm"
+  register: rpm_files
+
+- name: Define list of rpm files to install from local
+  ansible.builtin.set_fact:
+    rpm_path_install: "{{ rpm_files.files | map(attribute='path') | list }}"
+
+- name: Printout rpm_files
+  ansible.builtin.debug:
+    var: rpm_path_install
+
+- name: (Amazon Linux/CentOS/Oracle Linux/RHEL) Install dependencies
+  ansible.builtin.yum:
+    name: "{{ rpm_path_install }}"
+    update_cache: false
+    state: present # noqa package-latest
+  when: ansible_facts['os_family'] == 'RedHat'
+  become: true
+  become_user: root
