@@ -1,6 +1,13 @@
 ---
 - name: Install dependencies
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/prerequisites/install-dependencies.yml"
+  when:
+    - not nginx_offline_installed
+
+- name: Install dependencies offline
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/prerequisites/offline-dependencies.yml"
+  when:
+    - nginx_offline_installed
 
 - name: Set up SELinux
   when:

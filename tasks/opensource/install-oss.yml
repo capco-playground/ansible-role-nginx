@@ -13,6 +13,10 @@
     - name: "{{ nginx_setup | capitalize }} NGINX from source"
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/opensource/install-source.yml"
       when: nginx_install_from == 'source'
+    
+    - name: "{{ nginx_setup | capitalize }} NGINX from local package"
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/opensource/install-offline.yml"
+      when: nginx_install_from == 'offline_pkg'
 
 - name: "{{ nginx_setup | capitalize }} NGINX in Unix systems"
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/opensource/install-bsd.yml"
