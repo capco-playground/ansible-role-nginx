@@ -1,14 +1,12 @@
 ---
 galaxy_info:
-  author: nginxinc
+  author: Start
   description: Official Ansible role for installing NGINX
   role_name: nginx
-  company: F5, Inc.
-
+  namespace: capcoth
+  company: Capco consultancy
   license: Apache License, Version 2.0
-
-  min_ansible_version: '2.12'
-
+  min_ansible_version: '2.9'
   platforms:
     - name: Alpine
       versions: [all]
@@ -19,14 +17,13 @@ galaxy_info:
     - name: EL
       versions: ['7', '8', '9']
     - name: FreeBSD
-      versions: ['12.1', '12.2', '12.3', '12.4', '13.0', '13.1', '13.2']
+      versions: ['12.1', '12.2', '13.0', '13.1', '13.2']
     - name: OracleLinux
-      versions: ['7', '8', '9']
+      versions: ['all']
     - name: Ubuntu
-      versions: [focal, jammy, kinetic, lunar]
+      versions: [focal, jammy]
     - name: SLES
       versions: ['12', '15']
-
   galaxy_tags:
     - nginx
     - oss
@@ -37,7 +34,7 @@ galaxy_info:
     - development
     - install
 
-collections:
-  - ansible.posix
-  - community.crypto
-  - community.general
+# collections:
+#   - ansible.posix
+#   - community.crypto
+#   - community.general
