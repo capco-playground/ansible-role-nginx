@@ -1,6 +1,6 @@
 ---
 - name: (Alpine Linux) {{ nginx_license_status is defined | ternary('Remove', 'Configure') }} NGINX Plus repository
-  ansible.builtin.lineinfile:
+  lineinfile:
     path: /etc/apk/repositories
     insertafter: EOF
     line: "{{ nginx_repository | default(nginx_plus_default_repository_alpine) }}"
@@ -8,7 +8,7 @@
   when: nginx_manage_repo | bool
 
 - name: (Alpine Linux) {{ nginx_setup | capitalize }} NGINX Plus
-  community.general.apk:
+  apk:
     name: nginx-plus{{ nginx_version | default('') }}
     repository: "{{ nginx_repository | default(nginx_plus_default_repository_alpine) }}"
     state: "{{ nginx_state }}"

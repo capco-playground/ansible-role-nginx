@@ -1,13 +1,13 @@
 ---
 - name: (Alpine Linux) Install logrotate
-  community.general.apk:
+  apk:
     name: "{{ nginx_logrotate_package }}"
   when: ansible_facts['os_family'] == 'Alpine'
   become: true
   become_user: root
 
 - name: (Debian/Ubuntu) Install logrotate
-  ansible.builtin.apt:
+  apt:
     name: "{{ nginx_logrotate_package }}"
     state: present
   when: ansible_facts['os_family'] == 'Debian'
@@ -15,7 +15,7 @@
   become_user: root
 
 - name: (Amazon Linux/CentOS/Oracle Linux/RHEL) Install logrotate
-  ansible.builtin.yum:
+  yum:
     name: "{{ nginx_logrotate_package }}"
     state: present
   when: ansible_facts['os_family'] == 'RedHat'
@@ -23,7 +23,7 @@
   become_user: root
 
 - name: (SLES) Install Logrotate
-  community.general.zypper:
+  zypper:
     name: "{{ nginx_logrotate_package }}"
     state: present
   when: ansible_facts['os_family'] == 'Suse'
@@ -31,7 +31,7 @@
   become_user: root
 
 - name: Create logrotate config
-  ansible.builtin.template:
+  template:
     src: logrotate/nginx.j2
     dest: /etc/logrotate.d/nginx
     mode: "0644"

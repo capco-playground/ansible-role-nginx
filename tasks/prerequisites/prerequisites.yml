@@ -1,11 +1,11 @@
 ---
 - name: Install dependencies
-  ansible.builtin.include_tasks: "{{ role_path }}/tasks/prerequisites/install-dependencies.yml"
+  include_tasks: "{{ role_path }}/tasks/prerequisites/install-dependencies.yml"
   when:
     - not nginx_offline_installed
 
 - name: Install dependencies offline
-  ansible.builtin.include_tasks: "{{ role_path }}/tasks/prerequisites/offline-dependencies.yml"
+  include_tasks: "{{ role_path }}/tasks/prerequisites/offline-dependencies.yml"
   when:
     - nginx_offline_installed
 
@@ -17,10 +17,10 @@
     - ansible_facts['distribution'] != 'Amazon'
   block:
     - name: Check if SELinux is enabled
-      ansible.builtin.debug:
+      debug:
         msg: You need to enable SELinux, if it was disabled you need to reboot
       when: ansible_facts['selinux'] is undefined
 
     - name: Configure SELinux
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/prerequisites/setup-selinux.yml"
+      include_tasks: "{{ role_path }}/tasks/prerequisites/setup-selinux.yml"
       when: ansible_facts['selinux']['mode'] is defined

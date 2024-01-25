@@ -1,13 +1,13 @@
 ---
 - name: Ensure tmp folder {{ nginx_offline_main_target_path }} is exists
-  ansible.builtin.file:
+  file:
     path: "{{ nginx_offline_main_target_path }}"
     state: directory
     mode: '0755'
     owner: "{{ ansible_user }}"
 
 - name: Copy package files into host
-  ansible.builtin.copy:
+  copy:
     src: "{{ item }}"
     dest: "{{ nginx_offline_main_target_path }}"
     mode: '0744'
@@ -17,22 +17,22 @@
   register: nginx_copied
 
 - name: Get files in target folder
-  ansible.builtin.find:
+  find:
     paths: "{{ nginx_offline_main_target_path }}"
     file_type: "file"
     patterns: "*.rpm"
   register: rpm_nginx_files
 
 - name: Define list of rpm files to install from local
-  ansible.builtin.set_fact:
+  set_fact:
     rpm_nginx_path_install: "{{ rpm_nginx_files.files | map(attribute='path') | list }}"
 
 - name: Printout rpm_nginx_files
-  ansible.builtin.debug:
+  debug:
     var: rpm_nginx_path_install
 
 - name: (Amazon Linux/CentOS/Oracle Linux/RHEL) Install NGINX local packages.
-  ansible.builtin.yum:
+  yum:
     name: "{{ rpm_nginx_path_install }}"
     update_cache: false
     state: present # noqa package-latest

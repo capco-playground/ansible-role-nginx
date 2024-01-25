@@ -1,6 +1,6 @@
 ---
 - name: Got configure files in main path.
-  ansible.builtin.find:
+  find:
     path: "/etc/nginx"
     file_type: any
     recurse: true
@@ -8,7 +8,7 @@
   when: nginx_custom_app_enabled
 
 - name: Recursively change ownership.
-  ansible.builtin.file:
+  file:
     path: "{{ item.path }}"
     owner: "{{ customize_owner_user }}"
     group: "{{ customize_owner_group }}"
@@ -18,7 +18,7 @@
   when: nginx_dir_content is defined
 
 - name: Ensure custom base path provided.
-  ansible.builtin.file:
+  file:
     path: "{{ customize_base_path }}"
     state: directory
     mode: '0755'
@@ -27,7 +27,7 @@
   when: customize_base_path is defined
 
 - name: Ensure custom log path provided
-  ansible.builtin.file:
+  file:
     path: "{{ customize_base_cache_path }}"
     state: directory
     mode: '0755'
@@ -36,7 +36,7 @@
   when: customize_base_cache_path is defined
 
 - name: Ensure custom log path provided
-  ansible.builtin.file:
+  file:
     path: "{{ customize_base_log_path }}"
     state: directory
     mode: '0755'
@@ -45,7 +45,7 @@
   when: customize_base_log_path is defined
 
 - name: Ensure custom ssl path provided
-  ansible.builtin.file:
+  file:
     path: "{{ customize_base_ssl_path }}"
     state: directory
     mode: '0755'
@@ -54,7 +54,7 @@
   when: customize_base_ssl_path is defined
 
 - name: Ensure custom pid path provided
-  ansible.builtin.file:
+  file:
     path: "{{ customize_base_pid_path }}"
     state: directory
     mode: '0755'
@@ -63,7 +63,7 @@
   when: customize_base_pid_path is defined
 
 - name: Got pid file stat.
-  ansible.builtin.stat:
+  stat:
     path: "{{ customize_base_pid_path }}/{{ customize_file_pid_name }}"
   register: pid_file
   when:
@@ -71,7 +71,7 @@
     - customize_file_pid_name is defined
 
 - name: Ensure custom pid file provided.
-  ansible.builtin.file:
+  file:
     path: "{{ customize_base_pid_path }}/{{ customize_file_pid_name }}"
     mode: '0644'
     state: 'touch'
@@ -82,7 +82,7 @@
     - not pid_file.stat.exists
 
 - name: Apply custom main configure
-  ansible.builtin.template:
+  template:
     src: conf/nginx.conf.j2
     dest: /etc/nginx/nginx.conf
     mode: "0644"

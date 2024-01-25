@@ -1,6 +1,6 @@
 ---
 - name: (CentOS) Install GeoIP EPEL dependency
-  ansible.builtin.yum:
+  yum:
     name: epel-release
   when:
     - ansible_facts['distribution'] == "CentOS"
@@ -14,12 +14,12 @@
     - '"geoip2" in nginx_modules'
   block:
     - name: (Amazon Linux/RHEL 7) Check if libmaxminddb is available
-      ansible.builtin.yum:
+      yum:
         list: available
       register: packages
 
     - name: (Amazon Linux/RHEL 7) Install libmaxminddb
-      ansible.builtin.yum:
+      yum:
         name: https://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libmaxminddb-1.2.0-6.el7.x86_64.rpm
       when: "'libmaxminddb' not in packages['results']"
 
@@ -30,16 +30,16 @@
     - nginx_install_epel_release | bool
   block:
     - name: (AlmaLinux/Amazon Linux/Oracle Linux/RHEL/Rocky Linux) Import EPEL GPG key
-      ansible.builtin.rpm_key:
+      rpm_key:
         state: present
         key: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ((ansible_facts['distribution'] == 'Amazon') | ternary('7', ansible_facts['distribution_major_version'])) }}
 
     - name: (AlmaLinux/Amazon Linux/Oracle Linux/RHEL/Rocky Linux) Install EPEL
-      ansible.builtin.yum:
+      yum:
         name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ((ansible_facts['distribution'] == 'Amazon') | ternary('7', ansible_facts['distribution_major_version'])) }}.noarch.rpm
 
 - name: (Alpine Linux) Install Lua and Encrypted Sessions Alpine Linux 3.17 dependency
-  community.general.apk:
+  apk:
     name: nginx-plus-module-ndk
   when:
     - nginx_type == 'plus'
@@ -48,7 +48,7 @@
     - ('encrypted-sessions' in nginx_modules) or ('lua' in nginx_modules) or ('set-misc' in nginx_modules)
 
 - name: Install NGINX modules
-  ansible.builtin.package:
+  package:
     name: "nginx-{{ (nginx_type == 'plus') | ternary('plus-', '') }}module-{{ item['name'] | default(item) }}\
           {{ (nginx_repository is not defined and ansible_facts['os_family'] == 'Alpine' and nginx_type != 'plus') | ternary('@nginx', '') }}{{ item['version'] | default('') }}"
     state: "{{ item['state'] | default('present') }}"
