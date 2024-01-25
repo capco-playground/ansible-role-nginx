@@ -1,0 +1,11 @@
+---
+## This var file enable with set `nginx_install_from` to `offline_pkg`
+# If this option set to `true`, It will disable install from internet and lookup offline packages.
+nginx_offline_installed: false
+
+# This value is provide a base location you store the package files.
+# It will copy all file under this folder to target host before install it.
+nginx_offline_dependencies_basepath: "{{ playbook_dir }}/files/{{ group_names[0] }}/pkg/"
+nginx_offline_main_basepath: "{{ playbook_dir }}/files/{{ group_names[0] }}/nginx/"
+nginx_offline_dependencies_target_path: "/tmp/capco_pkg/pkg/"
+nginx_offline_main_target_path: "/tmp/capco_pkg/nginx/"
