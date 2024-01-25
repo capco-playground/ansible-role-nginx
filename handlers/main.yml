@@ -2,6 +2,8 @@
 - name: (Handler) Systemd daemon-reload
   ansible.builtin.systemd:
     daemon_reload: true
+  become: true
+  become_user: root
 
 - name: (Handler) Start/reload NGINX
   ansible.builtin.service:
@@ -12,6 +14,8 @@
     - nginx_start | bool
     - nginx_state != 'absent'
     - not ansible_check_mode | bool
+  become: true
+  become_user: root
   listen: (Handler) Run NGINX
 
 - name: (Handler) Check NGINX
@@ -23,6 +27,8 @@
   ignore_errors: true
   check_mode: false
   changed_when: false
+  become: true
+  become_user: root
   when: nginx_state != 'absent'
   listen: (Handler) Run NGINX
 
@@ -49,6 +55,8 @@
   ignore_errors: true
   check_mode: false
   changed_when: false
+  become: true
+  become_user: root
   listen: (Handler) Run logrotate
 
 - name: (Handler) Print logrotate error if config check fails
