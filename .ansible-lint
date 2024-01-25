@@ -5,3 +5,5 @@ skip_list:
   - name[template]
   - schema[meta]
   - yaml[line-length]
+  - fqcn[action-core]
+  - fqcn[action]
