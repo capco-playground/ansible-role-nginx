@@ -1,0 +1,30 @@
+---
+- name: Find exist conf file in NGINX.
+  find:
+    paths: "{{ nginx_proxy_target_path }}"
+    file_type: "file"
+    patterns: "*.conf"
+  register: conf_files
+
+- name: Ensure backup dir is existed.
+  file:
+    path: "{{ nginx_proxy_remove_exist_conf_backup_path }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ customize_owner_user }}"
+  when: nginx_proxy_remove_exist_conf_backup_enabled | bool
+
+- name: Backup file to other.
+  copy:
+    src: "{{ item }}"
+    dest: "{{ nginx_proxy_remove_exist_conf_backup_path }}/{{ '%d%m%Y' | strftime }}/"
+    owner: "{{ customize_owner_user }}"
+    remote_src: true
+  with_items: "{{ conf_files.files | map(attribute='path') | list }}"
+  when: nginx_proxy_remove_exist_conf_backup_enabled | bool
+
+- name: Remove conf files.
+  file:
+    path: "{{ item }}"
+    state: 'absent'
+  with_items: "{{ conf_files.files | map(attribute='path') | list }}"
