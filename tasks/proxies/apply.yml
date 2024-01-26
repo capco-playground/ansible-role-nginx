@@ -1,0 +1,68 @@
+---
+- name: Ensure path to store public and private key is exists.
+  file:
+    path: "{{ customize_base_ssl_path }}"
+    state: directory
+    mode: '0700'
+    owner: "{{ customize_owner_user }}"
+  when: nginx_proxy_ssl_enable | bool
+
+- name: Ensure DH param exists on workspace.
+  openssl_dhparam:
+    state: present
+    size: "{{ nginx_proxy_ssl_dhparam_key_size }}"
+    path: "{{ nginx_proxy_ssl_dhparam_out_path }}"
+    owner: "{{ customize_owner_user }}"
+    group: "{{ customize_owner_group }}"
+    mode: '0644'
+  become: true
+  become_user: root
+  when: 
+    - nginx_proxy_ssl_dhparam_enable | bool
+    - nginx_proxy_ssl_enable | bool
+
+- name: Copy exists SSL into host.
+  when: 
+    - not nginx_proxy_ssl_self_generate | bool
+    - nginx_proxy_ssl_enable | bool
+  block:
+    - name: Copy SSL cert into target host.
+      copy:
+        src: "{{ nginx_proxy_ssl_public_cert_path }}"
+        dest: "{{ nginx_proxy_ssl_target_cert_path }}"
+        mode: '0600'
+        owner: "{{ customize_owner_user }}"
+      when: 
+        - nginx_proxy_ssl_public_cert_path is defined
+
+    - name: Copy SSL key into target host.
+      copy:
+        src: "{{ nginx_proxy_ssl_private_key_path }}"
+        dest: "{{ nginx_proxy_ssl_target_key_path }}"
+        mode: '0600'
+        owner: "{{ customize_owner_user }}"
+      when:
+        - nginx_proxy_ssl_private_key_path is defined
+
+- name: Verify configuration file from src and dest.
+  include_tasks: check_diff_configure.yml
+
+- name: Clean existed proxies before apply new once.
+  include_tasks: remove_proxies.yml
+  when: 
+    - nginx_proxy_remove_exist_conf | bool
+    - force_replace_conf_files | bool
+  tags:
+    - nginx_proxy_apply
+    - nginx_proxy_clean
+
+- name: Copy proxy files into NGINX place.
+  copy:
+    src: "{{ item }}"
+    dest: "{{ nginx_proxy_target_path }}"
+    mode: '0744'
+    owner: "{{ customize_owner_user }}"
+  with_fileglob:
+    - "{{ nginx_proxy_source_path }}/*.conf"
+  when: force_replace_conf_files | bool
+  notify: (Handler) Run NGINX

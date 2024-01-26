@@ -48,7 +48,7 @@
   file:
     path: "{{ customize_base_ssl_path }}"
     state: directory
-    mode: '0755'
+    mode: '0700'
     owner: "{{ customize_owner_user }}"
     group: "{{ customize_owner_group }}"
   when: customize_base_ssl_path is defined

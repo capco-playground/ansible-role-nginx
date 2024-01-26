@@ -61,6 +61,12 @@
         - nginx_service_modify | bool
       tags: nginx_modify_systemd
 
+- name: Apply proxies configuration.
+  include_tasks: "{{ role_path }}/tasks/proxies/apply.yml"
+  when:
+    - nginx_proxy_deploy_enabled | bool
+  tags: nginx_proxy_apply
+
 - name: Trigger handlers if necessary
   meta: flush_handlers
 

@@ -1,0 +1,47 @@
+---
+- name: Get files in src folder.
+  find:
+    paths: "{{ nginx_proxy_source_path }}"
+    file_type: "file"
+    patterns: "*.conf"
+  delegate_to: localhost
+  register: src_conf_stat_files
+
+- name: Get files in dest folder.
+  find:
+    paths: "{{ nginx_proxy_target_path }}"
+    file_type: "file"
+    patterns: "*.conf"
+  register: dest_conf_stat_files
+
+- name: Create list of files.
+  set_fact:
+    nginx_conf_path_src: "{{ src_conf_stat_files.files | map(attribute='path') | list }}"
+    nginx_conf_path_dest: "{{ dest_conf_stat_files.files | map(attribute='path') | list }}"
+
+- name: Find src conf files in localhost.
+  stat:
+    path: "{{ item }}"
+  delegate_to: localhost
+  with_items: "{{ nginx_conf_path_src }}"
+  register: src_conf_files
+
+- name: Find dest conf files in target host.
+  stat:
+    path: "{{ item }}"
+  with_items: "{{ nginx_conf_path_dest }}"
+  register: dest_conf_files
+
+- name: Debug values
+  debug:
+    msg: "{{ dest_conf_files.results | json_query('[].stat.checksum') | sort }}"
+
+- name: Create list of checksum from localhost and target host
+  set_fact:
+    dest_conf_list: "{{ dest_conf_files.results | json_query('[].stat.checksum') | sort }}"
+    src_conf_list: "{{ src_conf_files.results | json_query('[].stat.checksum') | sort }}"
+
+- name: Check if 2 list aren't equal.
+  set_fact:
+    force_replace_conf_files: true
+  when: dest_conf_list | difference(src_conf_list) | length > 0

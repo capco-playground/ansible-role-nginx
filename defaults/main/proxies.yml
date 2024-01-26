@@ -1,0 +1,29 @@
+---
+## This option used for managed NGINX proxy configuration file in server with customize configure.
+# You can create a completed configure file in `{{ role_path }}/files/proxies/*` or you can set them 
+# in this variables.
+nginx_proxy_deploy_enabled: false
+force_replace_conf_files: false
+nginx_proxy_source_path: "{{ role_path }}/files/proxies"
+nginx_proxy_target_path: "/etc/nginx/conf.d"
+
+nginx_proxy_remove_exist_conf: false
+nginx_proxy_remove_exist_conf_backup_enabled: false
+nginx_proxy_remove_exist_conf_backup_path: "/app/nginx/backup"
+
+## This option set to `true` for apply SSL certificate to target host.
+nginx_proxy_ssl_enable: false
+nginx_proxy_ssl_public_cert_path: "{{ role_path }}/files/ssl/cert.pem"
+nginx_proxy_ssl_private_key_path: "{{ role_path }}/files/ssl/key.pem"
+nginx_proxy_ssl_target_key_path: "{{ customize_base_ssl_path  }}/key.pem"
+nginx_proxy_ssl_target_cert_path: "{{ customize_base_ssl_path  }}/cert.pem"
+
+nginx_proxy_ssl_dhparam_enable: false
+nginx_proxy_ssl_dhparam_out_path: "/etc/nginx/dhparam"
+nginx_proxy_ssl_dhparam_key_size: 2048
+
+# Now this option was not support.
+# Generate from `sudo openssl req -x509 -nodes -days 30 -newkey rsa:2048 -keyout key.pem -out cert.pem`
+nginx_proxy_ssl_self_generate: false
+nginx_proxy_ssl_cn: 'localhost'
+nginx_proxy_ssl_key_size: 2048
