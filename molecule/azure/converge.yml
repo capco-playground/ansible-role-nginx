@@ -29,6 +29,13 @@
         - notifempty
         - sharedscripts
         - create 0644 capco-user capco-user
+    ## Proxy area.
+    nginx_proxy_deploy_enabled: true
+    nginx_proxy_remove_exist_conf: true
+    nginx_proxy_remove_exist_conf_backup_enabled: true
+    nginx_proxy_ssl_enable: true
+    nginx_proxy_ssl_dhparam_enable: true
+    
   tasks:
     - name: Debug starting state
       debug:
