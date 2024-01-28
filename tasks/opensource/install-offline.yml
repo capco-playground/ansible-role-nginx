@@ -35,6 +35,7 @@
   yum:
     name: "{{ rpm_nginx_path_install }}"
     update_cache: false
+    disable_gpg_check: true
     state: present # noqa package-latest
   when: ansible_facts['os_family'] == 'RedHat'
   become: true
