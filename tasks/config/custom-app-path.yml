@@ -7,6 +7,16 @@
   register: nginx_dir_content
   when: nginx_custom_app_enabled
 
+# Fix bug `find` module exclude parent folder in variables.
+- name: Change parents directory's owner.
+  file:
+    path: "/etc/nginx"
+    owner: "{{ customize_owner_user }}"
+    group: "{{ customize_owner_group }}"
+  become: true
+  become_user: root
+  when: nginx_dir_content is defined
+
 - name: Recursively change ownership.
   file:
     path: "{{ item.path }}"
@@ -24,6 +34,8 @@
     mode: '0755'
     owner: "{{ customize_owner_user }}"
     group: "{{ customize_owner_group }}"
+  become: true
+  become_user: root
   when: customize_base_path is defined
 
 - name: Ensure custom log path provided
@@ -33,6 +45,8 @@
     mode: '0755'
     owner: "{{ customize_owner_user }}"
     group: "{{ customize_owner_group }}"
+  become: true
+  become_user: root
   when: customize_base_cache_path is defined
 
 - name: Ensure custom log path provided
@@ -42,6 +56,8 @@
     mode: '0755'
     owner: "{{ customize_owner_user }}"
     group: "{{ customize_owner_group }}"
+  become: true
+  become_user: root
   when: customize_base_log_path is defined
 
 - name: Ensure custom ssl path provided
@@ -51,6 +67,8 @@
     mode: '0700'
     owner: "{{ customize_owner_user }}"
     group: "{{ customize_owner_group }}"
+  become: true
+  become_user: root
   when: customize_base_ssl_path is defined
 
 - name: Ensure custom pid path provided
@@ -60,6 +78,8 @@
     mode: '0755'
     owner: "{{ customize_owner_user }}"
     group: "{{ customize_owner_group }}"
+  become: true
+  become_user: root
   when: customize_base_pid_path is defined
 
 - name: Got pid file stat.
@@ -87,6 +107,6 @@
     dest: /etc/nginx/nginx.conf
     mode: "0644"
   become: true
-  become_user: root
+  become_user: "{{ customize_owner_user }}"
   notify: (Handler) Run NGINX
   when: nginx_custom_app_enabled

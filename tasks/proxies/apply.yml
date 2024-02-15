@@ -5,6 +5,7 @@
     state: directory
     mode: '0700'
     owner: "{{ customize_owner_user }}"
+    group: "{{ customize_owner_group }}"
   when: nginx_proxy_ssl_enable | bool
 
 - name: Ensure DH param exists on workspace.
@@ -32,6 +33,7 @@
         dest: "{{ nginx_proxy_ssl_target_cert_path }}"
         mode: '0600'
         owner: "{{ customize_owner_user }}"
+        group: "{{ customize_owner_group }}"
       when: 
         - nginx_proxy_ssl_public_cert_path is defined
 
@@ -41,6 +43,7 @@
         dest: "{{ nginx_proxy_ssl_target_key_path }}"
         mode: '0600'
         owner: "{{ customize_owner_user }}"
+        group: "{{ customize_owner_group }}"
       when:
         - nginx_proxy_ssl_private_key_path is defined
 
@@ -62,7 +65,10 @@
     dest: "{{ nginx_proxy_target_path }}"
     mode: '0744'
     owner: "{{ customize_owner_user }}"
+    group: "{{ customize_owner_group }}"
   with_fileglob:
     - "{{ nginx_proxy_source_path }}/*.conf"
+  become: true
+  become_user: "{{ customize_owner_user }}"
   when: force_replace_conf_files | bool
   notify: (Handler) Run NGINX

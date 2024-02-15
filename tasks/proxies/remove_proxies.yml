@@ -8,18 +8,25 @@
 
 - name: Ensure backup dir is existed.
   file:
-    path: "{{ nginx_proxy_remove_exist_conf_backup_path }}"
+    path: "{{ nginx_proxy_remove_exist_conf_backup_path }}/{{ '%d%m%Y' | strftime }}"
     state: directory
     mode: '0755'
     owner: "{{ customize_owner_user }}"
+    group: "{{ customize_owner_group }}"
+  become: true
+  become_user: root
+  register: backup_dir_by_date
   when: nginx_proxy_remove_exist_conf_backup_enabled | bool
 
 - name: Backup file to other.
   copy:
     src: "{{ item }}"
-    dest: "{{ nginx_proxy_remove_exist_conf_backup_path }}/{{ '%d%m%Y' | strftime }}/"
+    dest: "{{ backup_dir_by_date.path }}"
     owner: "{{ customize_owner_user }}"
+    group: "{{ customize_owner_group }}"
     remote_src: true
+  become: true
+  become_user: "{{ customize_owner_user }}"
   with_items: "{{ conf_files.files | map(attribute='path') | list }}"
   when: nginx_proxy_remove_exist_conf_backup_enabled | bool
 
@@ -27,4 +34,6 @@
   file:
     path: "{{ item }}"
     state: 'absent'
+  become: true
+  become_user: "{{ customize_owner_user }}"
   with_items: "{{ conf_files.files | map(attribute='path') | list }}"
