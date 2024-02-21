@@ -97,6 +97,8 @@
     state: 'touch'
     owner: "{{ customize_owner_user }}"
     group: "{{ customize_owner_group }}"
+  become: true
+  become_user: root
   when:
     - pid_file.stat.exists is defined
     - not pid_file.stat.exists
